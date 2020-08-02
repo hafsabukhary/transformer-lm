@@ -188,6 +188,7 @@ def main(
         step = 1
         prev_tokens =   0
         if finetune:
+            print('fine tuning enabled')
             prev_tokens=seen_tokens
         while seen_tokens < prev_tokens+(epochs * epoch_size):
             if max_tokens and seen_tokens >= max_tokens:
