@@ -36,7 +36,7 @@ def main(
         n_head=12,
         n_layer=12,
         n_hidden=None,  # equal to n_embed by default (better leave at None)
-        clean=False,  # clean run folder
+        clean=False, # clean run folder
         log_every=1,
         save_every=1000,
         validate_every=None,  # same as save_every by default
@@ -44,6 +44,9 @@ def main(
         max_tokens=None,
         master_port='40390',
         master_addr='127.0.0.1',
+        #My code###
+        finetune=True,      #true if finetuning the model on other data
+        
         # These are set automatically when multiple GPUs are available
         device_id=None,
         n_devices=None,
@@ -131,6 +134,7 @@ def main(
             seen_tokens = state['seen_tokens']
         else:  # legacy format
             seen_tokens = state['step'] * step_tokens
+        #seen_tokens=0
         state_dict = fixed_state_dict(state['state_dict'])
         model.load_state_dict(state_dict)
         optimizer.load_state_dict(torch.load(optimizer_path))
@@ -182,7 +186,10 @@ def main(
         pbar.refresh()
         epoch_pbar.update(seen_tokens % epoch_size)
         step = 1
-        while seen_tokens < epochs * epoch_size:
+        prev_tokens =   0
+        if finetune:
+            prev_tokens=seen_tokens
+        while seen_tokens < prev_tokens+(epochs * epoch_size):
             if max_tokens and seen_tokens >= max_tokens:
                 print(f'max_tokens {max_tokens} reached, '
                       f'saving and exiting')
