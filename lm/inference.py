@@ -83,7 +83,7 @@ class ModelWrapper:
                        for i in next_log_probs.argsort()[-top_k:]],
                       reverse=True)
 
-    def generate_tokens(self, tokens_prefix: List[str], tokens_to_generate: int, top_k: int) -> List[str]:
+    def generate_tokens(self, tokens_prefix: List[str], tokens_to_generate: int, top_k: int,temperature: float = 1.0) -> List[str]:
 
         tokens = list(tokens_prefix)
 
@@ -94,6 +94,7 @@ class ModelWrapper:
 
             # convert log probs to real probs
             logprobs = np.array(list(map(lambda a: a[0], ntk)))
+            logprobs /= temperature
             probs = np.exp(logprobs) / np.exp(logprobs).sum()
 
             # pick next token randomly according to probs distribution
